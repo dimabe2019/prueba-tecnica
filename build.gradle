@@ -1,0 +1,26 @@
+plugins {
+    id("java")
+}
+
+group = "org.example"
+version = "1.0-SNAPSHOT"
+
+ext{
+    karateVersion = "1.4.1"
+    cucumberReportVersion = "5.7.5"
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation "com.intuit.karate:karate-junit5:${karateVersion}"
+    implementation "net.masterthought:cucumber-reporting:${cucumberReportVersion}"
+    testImplementation(platform("org.junit:junit-bom:5.10.0"))
+    testImplementation("org.junit.jupiter:junit-jupiter")
+}
+
+tasks.test {
+    useJUnitPlatform()
+}
