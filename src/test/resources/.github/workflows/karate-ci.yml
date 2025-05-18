@@ -1,0 +1,44 @@
+name: Karate CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    env:
+      KARATE_ENV: qa  # o dev, staging, etc.
+
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
+
+      - name: Configurar Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Configurar Gradle
+        uses: gradle/gradle-build-action@v3
+
+      - name: Dar permisos a Gradle wrapper
+        run: chmod +x gradlew
+
+      - name: Compilar (sin pruebas)
+        run: ./gradlew build -x test
+
+      - name: Ejecutar pruebas Karate
+        run: ./gradlew test -Dkarate.env=$KARATE_ENV
+
+      - name: Publicar reportes Karate (HTML)
+        uses: actions/upload-artifact@v4
+        with:
+          name: karate-report
+          path: build/reports/karate
